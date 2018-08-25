@@ -15,8 +15,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::slotLogin()
 {
-    if (ui->lePassword->text() == "admin" and ui->leUsername->text() == "admin")
-        emit signalIsLogged();
+    if (ui->lePassword->text() == "1234" and ui->leUsername->text() == "admin")
+        emit signalIsLogged(ui->leUsername->text());
     else
         emit signalLogginFailed();
 }

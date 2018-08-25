@@ -12,7 +12,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
     signals:
-        void signalIsLogged();
+        void signalIsLogged(const QString &userName);
         void signalLogginFailed();
 
     public:
