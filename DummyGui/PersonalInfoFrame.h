@@ -3,14 +3,21 @@
 
 #include <QFrame>
 
+class QCheckBox;
+class QRadioButton;
+
 class PersonalInfoFrame : public QFrame
 {
-    Q_OBJECT
+      Q_OBJECT
 
-    public:
-        explicit PersonalInfoFrame (QWidget *parent = nullptr);
+   public:
+      explicit PersonalInfoFrame (QWidget *parent = nullptr);
 
-    friend class MainWindowTest;
+   private:
+      QCheckBox *checkbox = nullptr;
+      QRadioButton *radiobutton = nullptr;
+
+      friend class MainWindowTest;
 };
 
 #endif // PERSONALINFOFRAME_H
