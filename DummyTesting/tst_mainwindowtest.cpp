@@ -2,7 +2,7 @@
 #include <QSignalSpy>
 #include <QtTest>
 
-// add necessary includes here
+// Additional includes
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
 #include <QtWidgets/QMainWindow>
@@ -24,18 +24,36 @@ private slots:
     void testWithExpectedFailures ();
     void testFailsOnWindows ();
     void testCompareAndVerify ();
+    void testBenchamrkedLoop1();
+    void testBenchamrkedLoop2();
+    void testBenchmarkedLoop3();
 
 private:
-    MainWindow mainWindow;
+    MainWindow *mainWindow = nullptr;
 };
 
 MainWindowTest::MainWindowTest () {}
 
 MainWindowTest::~MainWindowTest () {}
 
-void MainWindowTest::initTestCase () {}
+void MainWindowTest::initTestCase ()
+{
+    mainWindow = new MainWindow ();
+    mainWindow->show();
 
-void MainWindowTest::cleanupTestCase () {}
+    QVERIFY(mainWindow->isVisible());
+}
+
+void MainWindowTest::cleanupTestCase ()
+{
+    mainWindow->close ();
+
+    QVERIFY(!mainWindow->isVisible());
+    QVERIFY(mainWindow->isHidden());
+
+    delete mainWindow;
+    mainWindow = nullptr;
+}
 
 void MainWindowTest::testWithWarnings ()
 {
@@ -85,10 +103,11 @@ void MainWindowTest::testCompareAndVerify ()
 
     QCOMPARE("hello", QString("HELLO").toLower());
 
-    // QVERIFY only shows the condition and says that is false. No more explanations
-    // QVERIFY("hello" == "HELLO");
-
-    /* QVERIFY2 shows a custom message if the comparision is false. For the expression:
+    /* QVERIFY only shows the condition and says that is false. No more explanations
+     *
+     * QVERIFY("hello" == "HELLO");
+     *
+     * QVERIFY2 shows a custom message if the comparision is false. For the expression:
      *
      * QVERIFY2 (4.2 == 4, "Remember that the first value is a float. Be careful with the precison.");
      *
@@ -106,13 +125,13 @@ void MainWindowTest::testCorrectLogin ()
 {
     const char *user = "admin";
 
-    QSignalSpy spy (&mainWindow, &MainWindow::signalIsLogged);
-    QSignalSpy spy2 (&mainWindow, &MainWindow::signalLogginFailed);
+    QSignalSpy spy (mainWindow, &MainWindow::signalIsLogged);
+    QSignalSpy spy2 (mainWindow, &MainWindow::signalLogginFailed);
 
-    QTest::keyClicks (mainWindow.ui->leUsername, user);
-    QTest::keyClicks (mainWindow.ui->lePassword, "1234");
+    QTest::keyClicks (mainWindow->ui->leUsername, user);
+    QTest::keyClicks (mainWindow->ui->lePassword, "1234");
 
-    QTest::mouseClick (mainWindow.ui->pbLogin, Qt::LeftButton);
+    QTest::mouseClick (mainWindow->ui->pbLogin, Qt::LeftButton);
 
     // QCOMPARE(mainWindow.ui->leUsername->text(), QString("hello world"));
     QCOMPARE (spy2.count (), 0);
@@ -125,6 +144,36 @@ void MainWindowTest::testCorrectLogin ()
     const auto signalParam = firstArgFromTheSignal.constFirst();
 
     QCOMPARE (signalParam, user);
+}
+
+void MainWindowTest::testBenchamrkedLoop1()
+{
+    QBENCHMARK
+    {
+        for (auto i = 0; i < 1000000; ++i)
+        {
+            QString *s = new QString("hola");
+            delete s;
+        }
+    }
+}
+
+void MainWindowTest::testBenchamrkedLoop2()
+{
+    QBENCHMARK
+    {
+        for (auto i = 0; i < 10000000; ++i)
+            QScopedPointer<QString> s(new QString("hola"));
+    }
+}
+
+void MainWindowTest::testBenchmarkedLoop3()
+{
+    QBENCHMARK
+    {
+        for (auto i = 0; i < 10000000; ++i)
+            auto s =  QSharedPointer<QString>::create("hola");
+    }
 }
 
 QTEST_MAIN (MainWindowTest)
