@@ -133,8 +133,10 @@ void MainWindowTest::testCorrectLogin ()
 
     QTest::mouseClick (mainWindow->ui->pbLogin, Qt::LeftButton);
 
-    // QCOMPARE(mainWindow.ui->leUsername->text(), QString("hello world"));
     QCOMPARE (spy2.count (), 0);
+
+    spy.wait(3500);
+
     QCOMPARE (spy.count (), 1);
 
     const auto firstArgFromTheSignal = spy.takeFirst();
@@ -162,7 +164,7 @@ void MainWindowTest::testBenchamrkedLoop2()
 {
     QBENCHMARK
     {
-        for (auto i = 0; i < 10000000; ++i)
+        for (auto i = 0; i < 1000000; ++i)
             QScopedPointer<QString> s(new QString("hola"));
     }
 }
@@ -171,7 +173,7 @@ void MainWindowTest::testBenchmarkedLoop3()
 {
     QBENCHMARK
     {
-        for (auto i = 0; i < 10000000; ++i)
+        for (auto i = 0; i < 1000000; ++i)
             auto s =  QSharedPointer<QString>::create("hola");
     }
 }
