@@ -9,6 +9,14 @@ MainWindow::MainWindow(QWidget *parent)
 {
    ui->setupUi(this);
 
+   ui->tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
+   ui->tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
+   ui->tableWidget->setShowGrid(false);
+   ui->tableWidget->setColumnCount(2);
+   ui->tableWidget->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
+   ui->tableWidget->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+   ui->tableWidget->verticalHeader()->setVisible(false);
+
    ui->cbLogin->addItems ({"Item 1", "Item 2", "Item 3"});
 }
 
@@ -19,7 +27,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::slotLogin()
 {
-   if (ui->lePassword->text() == "1234" and ui->leUsername->text() == "admin")
+   if (ui->leUsername->text().contains("admin"))
    {
       ui->pbAddUser->setDisabled(true);
 
@@ -42,23 +50,15 @@ void MainWindow::onLoginSuccess()
    ui->leUsername->setText("");
    ui->lePassword->setText("");
 
-   auto rowToInsert = ui->listWidget->count ();
-   auto item = new QListWidgetItem(userAdded);
+   auto item = new QListWidgetItem();
    ui->listWidget->insertItem (ui->listWidget->count (), item);
+   ui->listWidget->setItemWidget(item, new QCheckBox(userAdded));
 
-   /*
-   auto checkBox = new QCheckBox();
-   auto label = new QLabel(userAdded);
+   auto tableRowWhereInsert = ui->tableWidget->rowCount();
 
-   auto itemLayout = new QHBoxLayout();
-   itemLayout->addWidget (checkBox);
-   itemLayout->addWidget (label);
-
-   auto itemWidget = new QWidget();
-   itemWidget->setLayout (itemLayout);
-
-   ui->listWidget->setItemWidget (item, itemWidget);
-   */
+   ui->tableWidget->insertRow(tableRowWhereInsert);
+   ui->tableWidget->setCellWidget(tableRowWhereInsert, 0, new QCheckBox(""));
+   ui->tableWidget->setCellWidget(tableRowWhereInsert, 1, new QLabel(userAdded));
 
    emit signalIsLogged(userAdded);
 }

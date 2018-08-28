@@ -66,9 +66,6 @@
       </property>
      </widget>
     </item>
-    <item row="0" column="2" colspan="2">
-     <widget class="QListWidget" name="listWidget"/>
-    </item>
     <item row="4" column="2">
      <widget class="QPushButton" name="pbAddUser">
       <property name="text">
@@ -83,6 +80,12 @@
       </property>
      </widget>
     </item>
+    <item row="0" column="2">
+     <widget class="QListWidget" name="listWidget"/>
+    </item>
+    <item row="0" column="3">
+     <widget class="QTableWidget" name="tableWidget"/>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -91,7 +94,7 @@
      <x>0</x>
      <y>0</y>
      <width>496</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>

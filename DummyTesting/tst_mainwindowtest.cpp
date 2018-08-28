@@ -27,6 +27,7 @@ class MainWindowTest : public QObject
     void testBenchamrkedLoop1 ();
     void testBenchamrkedLoop2 ();
     void testBenchmarkedLoop3 ();
+    void testSelectRowInTable ();
 
   private:
     MainWindow *mainWindow = nullptr;
@@ -169,6 +170,45 @@ void MainWindowTest::testBenchmarkedLoop3 ()
         for (auto i = 0; i < 1000000; ++i)
             auto s = QSharedPointer<QString>::create ("hola");
     }
+}
+
+void MainWindowTest::testSelectRowInTable()
+{
+    auto user = "admin";
+
+    QSignalSpy spy (mainWindow, &MainWindow::signalIsLogged);
+    QSignalSpy spy2 (mainWindow->ui->tableWidget, &QTableWidget::cellClicked);
+
+    QTest::keyClicks (mainWindow->ui->leUsername, user);
+    QTest::keyClicks (mainWindow->ui->lePassword, "1234");
+
+    QTest::mouseClick (mainWindow->ui->pbAddUser, Qt::LeftButton);
+
+    spy.wait (3500);
+
+    QCOMPARE (spy.count (), 1);
+
+    // Getting Row 0 - Column 1
+    int x = mainWindow->ui->tableWidget->columnViewportPosition(1);
+    int y = mainWindow->ui->tableWidget->rowViewportPosition(0);
+
+    QTest::mouseClick(mainWindow->ui->tableWidget, Qt::LeftButton, nullptr, QPoint(x, y));
+
+    spy2.wait(1000);
+
+    QCOMPARE(spy2.count(), 1);
+
+    auto signalsSent = spy2.takeFirst ();
+
+    QVERIFY2 (!signalsSent.isEmpty (), "The signal should have at least 1 param!");
+
+    const auto row = signalsSent.takeFirst();
+
+    QCOMPARE(row, 0);
+
+    const auto column = signalsSent.takeFirst();
+
+    QCOMPARE(column, 1);
 }
 
 QTEST_MAIN (MainWindowTest)
