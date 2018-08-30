@@ -30,9 +30,9 @@
      </widget>
     </item>
     <item row="1" column="2">
-     <widget class="QPushButton" name="pbKingdom">
+     <widget class="QPushButton" name="pbAddToList">
       <property name="text">
-       <string>Kingdom</string>
+       <string>New list entry</string>
       </property>
      </widget>
     </item>
@@ -125,7 +125,7 @@
   <tabstop>listWidget</tabstop>
   <tabstop>pbFacebook</tabstop>
   <tabstop>pbMessaging</tabstop>
-  <tabstop>pbKingdom</tabstop>
+  <tabstop>pbAddToList</tabstop>
   <tabstop>pbStore</tabstop>
   <tabstop>cbLogin</tabstop>
  </tabstops>
@@ -147,8 +147,25 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>pbAddToList</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>addEntryToList()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>251</x>
+     <y>408</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>393</x>
+     <y>526</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>slotLogin()</slot>
+  <slot>addEntryToList()</slot>
  </slots>
 </ui>

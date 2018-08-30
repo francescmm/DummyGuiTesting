@@ -26,6 +26,7 @@ class MainWindow : public QMainWindow
     private slots:
         void slotLogin();
         void onLoginSuccess();
+        void addEntryToList();
 
     friend class MainWindowTest;
 };

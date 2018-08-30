@@ -50,10 +50,6 @@ void MainWindow::onLoginSuccess()
    ui->leUsername->setText("");
    ui->lePassword->setText("");
 
-   auto item = new QListWidgetItem();
-   ui->listWidget->insertItem (ui->listWidget->count (), item);
-   ui->listWidget->setItemWidget(item, new QCheckBox(userAdded));
-
    auto tableRowWhereInsert = ui->tableWidget->rowCount();
 
    ui->tableWidget->insertRow(tableRowWhereInsert);
@@ -61,4 +57,14 @@ void MainWindow::onLoginSuccess()
    ui->tableWidget->setCellWidget(tableRowWhereInsert, 1, new QLabel(userAdded));
 
    emit signalIsLogged(userAdded);
+}
+
+void MainWindow::addEntryToList()
+{
+    ui->statusBar->showMessage("Added new entrey in the list!");
+
+    auto item = new QListWidgetItem("newUser" + QString::number(ui->listWidget->count()));
+    item->setFlags(item->flags() | Qt::ItemIsEditable);
+
+    ui->listWidget->addItem(item);
 }
