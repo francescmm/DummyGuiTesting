@@ -19,6 +19,9 @@ class MainWindowTest : public QObject
   private slots:
     void initTestCase ();
     void cleanupTestCase ();
+    void init () { }
+    void cleanup ();
+
     void testAddUser ();
     void testWithWarnings ();
     void testSkipedWithMessage ();
@@ -53,7 +56,31 @@ void MainWindowTest::cleanupTestCase ()
     mainWindow = nullptr;
 }
 
-void MainWindowTest::testWithWarnings () { QWARN ("Test is empty. Fill it with something!"); }
+void MainWindowTest::cleanup ()
+{
+    for (auto row = mainWindow->ui->tableWidget->rowCount() - 1; row >= 0; --row)
+    {
+        for (auto col = 0; col < mainWindow->ui->tableWidget->columnCount(); ++col)
+            delete mainWindow->ui->tableWidget->cellWidget(row, col);
+
+        mainWindow->ui->tableWidget->removeRow(row);
+    }
+
+    mainWindow->ui->tableWidget->clearContents();
+
+    for (auto row = mainWindow->ui->listWidget->count() - 1; row >= 0; --row)
+    {
+        auto item = mainWindow->ui->listWidget->item(row);
+        delete mainWindow->ui->listWidget->itemWidget(item);
+
+        delete item;
+    }
+}
+
+void MainWindowTest::testWithWarnings ()
+{
+    QWARN ("Test is empty. Fill it with something!");
+}
 
 void MainWindowTest::testSkipedWithMessage ()
 {
