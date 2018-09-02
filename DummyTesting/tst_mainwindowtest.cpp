@@ -25,6 +25,9 @@ class MainWindowTest : public QObject
     void testAddUser_data();
     void testAddUser ();
 
+    void testValid();
+    void testValid_data();
+
     void testWithWarnings ();
     void testSkipedWithMessage ();
     void testWithExpectedFailures ();
@@ -33,12 +36,38 @@ class MainWindowTest : public QObject
     void testBenchamrkedLoop1 ();
     void testBenchamrkedLoop2 ();
     void testBenchmarkedLoop3 ();
+
+    void testSelectCellInTable_data();
     void testSelectCellInTable ();
+
     void testEditCellInTable();
 
   private:
     MainWindow *mainWindow = nullptr;
 };
+
+void MainWindowTest::testValid()
+{
+  QFETCH( int, year );
+  QFETCH( int, month );
+  QFETCH( int, day );
+
+  QDate date( year, month, day );
+  QTEST( date.isValid(), "valid" );
+}
+
+void MainWindowTest::testValid_data()
+{
+  QTest::addColumn<int>( "year" );
+  QTest::addColumn<int>( "month" );
+  QTest::addColumn<int>( "day" );
+  QTest::addColumn<bool>( "valid" );
+
+  QTest::newRow( "Valid, normal" ) << 1973 << 8 << 16 << true;
+  QTest::newRow( "Invalid, normal" ) << 1973 << 9 << 31 << false;
+  QTest::newRow( "Valid, leap-year" ) << 1980 << 2 << 29 << true;
+  QTest::newRow( "Invalid, leap-year" ) << 1981 << 2 << 29 << false;
+}
 
 void MainWindowTest::initTestCase ()
 {
@@ -151,7 +180,8 @@ void MainWindowTest::testAddUser_data()
     QTest::addColumn<QString>("user");
     QTest::addColumn<QString>("pass");
 
-    QTest::newRow("user_valid") << QString("admin%1").arg(QString::number(mainWindow->ui->tableWidget->rowCount())) << "1234";
+    QTest::newRow("user_valid") << QString("admin1") << "1234";
+    QTest::newRow("user_valid") << QString("admin2") << "1234";
 }
 
 void MainWindowTest::testAddUser ()
@@ -212,11 +242,43 @@ void MainWindowTest::testBenchmarkedLoop3 ()
     }
 }
 
+void MainWindowTest::testSelectCellInTable_data()
+{
+    QTest::addColumn<QString>("user");
+    QTest::addColumn<QString>("pass");
+
+    QTest::newRow("user_valid") << QString("admin1") << "1234";
+    QTest::newRow("user_valid") << QString("admin2") << "1234";
+}
+
 void MainWindowTest::testSelectCellInTable()
 {
-    testAddUser();
+    QSignalSpy spy (mainWindow, &MainWindow::signalIsLogged);
+    QSignalSpy spy2 (mainWindow, &MainWindow::signalLogginFailed);
 
-    QSignalSpy spy2 (mainWindow->ui->tableWidget, &QTableWidget::cellClicked);
+    QFETCH(QString, user);
+    QFETCH(QString, pass);
+
+    QTest::keyClicks (mainWindow->ui->leUsername, user);
+    QTest::keyClicks (mainWindow->ui->lePassword, pass);
+
+    QTest::mouseClick (mainWindow->ui->pbAddUser, Qt::LeftButton);
+
+    QCOMPARE (spy2.count (), 0);
+
+    spy.wait (3500);
+
+    QCOMPARE (spy.count (), 1);
+
+    const auto firstArgFromTheSignal = spy.takeFirst ();
+
+    QVERIFY2 (!firstArgFromTheSignal.isEmpty (), "The signal should have at least 1 param!");
+
+    const auto signalParam = firstArgFromTheSignal.constFirst ();
+
+    QCOMPARE (signalParam, user);
+
+    QSignalSpy spy3 (mainWindow->ui->tableWidget, &QTableWidget::cellClicked);
 
     auto selectedRow = 0;
     auto selectedColumn = 1;
@@ -226,11 +288,11 @@ void MainWindowTest::testSelectCellInTable()
 
     QTest::mouseClick(mainWindow->ui->tableWidget->viewport(), Qt::LeftButton, nullptr, QPoint(x, y));
 
-    spy2.wait(500);
+    spy3.wait(500);
 
-    QCOMPARE(spy2.count(), 1);
+    QCOMPARE(spy3.count(), 1);
 
-    auto signalsSent = spy2.takeFirst ();
+    auto signalsSent = spy3.takeFirst ();
 
     QVERIFY2 (!signalsSent.isEmpty (), "The signal should have at least 1 param!");
 
