@@ -22,7 +22,9 @@ class MainWindowTest : public QObject
     void init () { }
     void cleanup ();
 
+    void testAddUser_data();
     void testAddUser ();
+
     void testWithWarnings ();
     void testSkipedWithMessage ();
     void testWithExpectedFailures ();
@@ -144,15 +146,24 @@ void MainWindowTest::testCompareAndVerify ()
     QVERIFY2 (num1 == num2, "Remember that the first value is a float. Be careful with the precison.");
 }
 
+void MainWindowTest::testAddUser_data()
+{
+    QTest::addColumn<QString>("user");
+    QTest::addColumn<QString>("pass");
+
+    QTest::newRow("user_valid") << QString("admin%1").arg(QString::number(mainWindow->ui->tableWidget->rowCount())) << "1234";
+}
+
 void MainWindowTest::testAddUser ()
 {
     QSignalSpy spy (mainWindow, &MainWindow::signalIsLogged);
     QSignalSpy spy2 (mainWindow, &MainWindow::signalLogginFailed);
 
-    auto user = QString("admin%1").arg(QString::number(mainWindow->ui->tableWidget->rowCount()));
+    QFETCH(QString, user);
+    QFETCH(QString, pass);
 
     QTest::keyClicks (mainWindow->ui->leUsername, user);
-    QTest::keyClicks (mainWindow->ui->lePassword, "1234");
+    QTest::keyClicks (mainWindow->ui->lePassword, pass);
 
     QTest::mouseClick (mainWindow->ui->pbAddUser, Qt::LeftButton);
 
