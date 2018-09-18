@@ -4,47 +4,10 @@
 #include <QLineEdit>
 
 // Additional includes
+#include "MainWIndowTest.h"
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
 #include <QtWidgets/QMainWindow>
-
-class MainWindowTest : public QObject
-{
-    Q_OBJECT
-
-  public:
-    MainWindowTest ()  = default;
-    ~MainWindowTest () = default;
-
-  private slots:
-    void initTestCase ();
-    void cleanupTestCase ();
-    void init () { }
-    void cleanup ();
-
-    void testAddUser_data();
-    void testAddUser ();
-
-    void testValid();
-    void testValid_data();
-
-    void testWithWarnings ();
-    void testSkipedWithMessage ();
-    void testWithExpectedFailures ();
-    void testFailsOnWindows ();
-    void testCompareAndVerify ();
-    void testBenchamrkedLoop1 ();
-    void testBenchamrkedLoop2 ();
-    void testBenchmarkedLoop3 ();
-
-    void testSelectCellInTable_data();
-    void testSelectCellInTable ();
-
-    void testEditCellInTable();
-
-  private:
-    MainWindow *mainWindow = nullptr;
-};
 
 void MainWindowTest::testValid()
 {
@@ -343,7 +306,3 @@ void MainWindowTest::testEditCellInTable()
 
     QCOMPARE(mainWindow->ui->listWidget->itemAt(rect.center())->text(), "newAdmin");
 }
-
-QTEST_MAIN (MainWindowTest)
-
-#include "tst_mainwindowtest.moc"

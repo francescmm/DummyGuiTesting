@@ -1,14 +1,17 @@
 QT += testlib gui core widgets
-CONFIG += qt warn_on depend_includepath testcase
+CONFIG += c++14
 
 TEMPLATE = app
 
-SOURCES +=  tst_mainwindowtest.cpp \
+SOURCES +=  \
     ../DummyGui/MainWindow.cpp \
-    ../DummyGui/PersonalInfoFrame.cpp
+    ../DummyGui/PersonalInfoFrame.cpp \
+    main.cpp \
+    MainWindowTest.cpp
 
 HEADERS += ../DummyGui/MainWindow.h \
-    ../DummyGui/PersonalInfoFrame.h
+    ../DummyGui/PersonalInfoFrame.h \
+    MainWindowTest.h
 
 FORMS += ../DummyGui/MainWindow.ui
 
