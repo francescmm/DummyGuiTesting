@@ -4,7 +4,7 @@
 #include <QLineEdit>
 
 // Additional includes
-#include "MainWIndowTest.h"
+#include "MainWindowTest.h"
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
 #include <QtWidgets/QMainWindow>
