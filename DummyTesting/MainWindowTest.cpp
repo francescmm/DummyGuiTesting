@@ -52,9 +52,11 @@ void MainWindowTest::cleanupTestCase ()
 
 void MainWindowTest::cleanup ()
 {
+    const auto colCount = mainWindow->ui->tableWidget->columnCount();
+
     for (auto row = mainWindow->ui->tableWidget->rowCount() - 1; row >= 0; --row)
     {
-        for (auto col = 0; col < mainWindow->ui->tableWidget->columnCount(); ++col)
+        for (auto col = 0; col < colCount; ++col)
             delete mainWindow->ui->tableWidget->cellWidget(row, col);
 
         mainWindow->ui->tableWidget->removeRow(row);
@@ -64,11 +66,13 @@ void MainWindowTest::cleanup ()
 
     for (auto row = mainWindow->ui->listWidget->count() - 1; row >= 0; --row)
     {
-        auto item = mainWindow->ui->listWidget->item(row);
+        const auto item = mainWindow->ui->listWidget->item(row);
         delete mainWindow->ui->listWidget->itemWidget(item);
 
         delete item;
     }
+
+    mainWindow->repaint();
 }
 
 void MainWindowTest::testWithWarnings ()
@@ -135,7 +139,7 @@ void MainWindowTest::testCompareAndVerify ()
     auto num1 = 4.0f;
     auto num2 = 4u;
 
-    QVERIFY2 (num1 == num2, "Remember that the first value is a float. Be careful with the precison.");
+    QVERIFY2 (num1 == num2, "Comparing floating point with == or != is unsafe.");
 }
 
 void MainWindowTest::testAddUser_data()
@@ -181,7 +185,7 @@ void MainWindowTest::testBenchamrkedLoop1 ()
     {
         for (auto i = 0; i < 1000000; ++i)
         {
-            QString *s = new QString ("hola");
+            auto s = new QString ("hola");
             delete s;
         }
     }
@@ -209,9 +213,10 @@ void MainWindowTest::testSelectCellInTable_data()
 {
     QTest::addColumn<QString>("user");
     QTest::addColumn<QString>("pass");
+    QTest::addColumn<bool>("isValid");
 
-    QTest::newRow("user_valid") << QString("admin1") << "1234";
-    QTest::newRow("user_valid") << QString("admin2") << "1234";
+    QTest::newRow("user_valid") << QString("admin1") << "1234" << true;
+    QTest::newRow("user_valid") << QString("admin2") << "1234" << true;
 }
 
 void MainWindowTest::testSelectCellInTable()
@@ -221,66 +226,76 @@ void MainWindowTest::testSelectCellInTable()
 
     QFETCH(QString, user);
     QFETCH(QString, pass);
+    QFETCH(bool, isValid);
 
     QTest::keyClicks (mainWindow->ui->leUsername, user);
     QTest::keyClicks (mainWindow->ui->lePassword, pass);
 
     QTest::mouseClick (mainWindow->ui->pbAddUser, Qt::LeftButton);
 
-    QCOMPARE (spy2.count (), 0);
+    if (isValid)
+    {
+        spy.wait (3500);
 
-    spy.wait (3500);
+        QCOMPARE (spy.count (), 1);
+        QCOMPARE (spy2.count (), 0);
 
-    QCOMPARE (spy.count (), 1);
+        const auto firstArgFromTheSignal = spy.takeFirst ();
 
-    const auto firstArgFromTheSignal = spy.takeFirst ();
+        QVERIFY2 (!firstArgFromTheSignal.isEmpty (), "The signal should have at least 1 param!");
 
-    QVERIFY2 (!firstArgFromTheSignal.isEmpty (), "The signal should have at least 1 param!");
+        const auto signalParam = firstArgFromTheSignal.constFirst ();
 
-    const auto signalParam = firstArgFromTheSignal.constFirst ();
+        QCOMPARE (signalParam, user);
 
-    QCOMPARE (signalParam, user);
+        QSignalSpy spy3 (mainWindow->ui->tableWidget, &QTableWidget::cellClicked);
 
-    QSignalSpy spy3 (mainWindow->ui->tableWidget, &QTableWidget::cellClicked);
+        const auto selectedRow = 0;
+        const auto selectedColumn = 1;
+        const auto x = mainWindow->ui->tableWidget->columnViewportPosition(selectedColumn);
+        const auto y = mainWindow->ui->tableWidget->rowViewportPosition(selectedRow);
 
-    auto selectedRow = 0;
-    auto selectedColumn = 1;
+        QTest::mouseClick(mainWindow->ui->tableWidget->viewport(), Qt::LeftButton, nullptr, QPoint(x, y));
 
-    int x = mainWindow->ui->tableWidget->columnViewportPosition(selectedColumn);
-    int y = mainWindow->ui->tableWidget->rowViewportPosition(selectedRow);
+        spy3.wait(500);
 
-    QTest::mouseClick(mainWindow->ui->tableWidget->viewport(), Qt::LeftButton, nullptr, QPoint(x, y));
+        QCOMPARE(spy3.count(), 1);
 
-    spy3.wait(500);
+        auto signalsSent = spy3.takeFirst ();
 
-    QCOMPARE(spy3.count(), 1);
+        QVERIFY2 (!signalsSent.isEmpty (), "The signal should have at least 1 param!");
 
-    auto signalsSent = spy3.takeFirst ();
+        const auto expectedRow = signalsSent.takeFirst();
+        const auto expectedColumn = signalsSent.takeFirst();
 
-    QVERIFY2 (!signalsSent.isEmpty (), "The signal should have at least 1 param!");
+        QCOMPARE(expectedRow, selectedRow);
+        QCOMPARE(expectedColumn, selectedColumn);
+    }
+    else
+    {
+        spy.wait (3500);
 
-    const auto expectedRow = signalsSent.takeFirst();
-    const auto expectedColumn = signalsSent.takeFirst();
-
-    QCOMPARE(expectedRow, selectedRow);
-    QCOMPARE(expectedColumn, selectedColumn);
+        QCOMPARE (spy.count (), 0);
+        QCOMPARE (spy2.count (), 1);
+    }
 }
 
 void MainWindowTest::testEditCellInTable()
 {
     QTest::mouseClick (mainWindow->ui->pbAddToList, Qt::LeftButton);
 
-    auto testWidget = mainWindow->ui->listWidget;
-    auto selectedRow = 0;
-    auto item = testWidget->item(selectedRow);
+    const auto testWidget = mainWindow->ui->listWidget;
+    const auto selectedRow = 0;
+    const auto item = testWidget->item(selectedRow);
 
     QVERIFY2(item, "An item must exist");
 
-    auto rect = testWidget->visualItemRect(item);
+    const auto rect = testWidget->visualItemRect(item);
 
     QTest::mouseClick(testWidget->viewport(), Qt::LeftButton, nullptr, rect.center());
     QTest::mouseDClick(testWidget->viewport(), Qt::LeftButton, nullptr, rect.center());
-    QTest::qWait(100);
+
+    QTest::qWait(200);
 
     QList<QObject *> children = testWidget->viewport()->children();
 
@@ -288,7 +303,7 @@ void MainWindowTest::testEditCellInTable()
     {
         if (children.at(i)->inherits("QExpandingLineEdit"))
         {
-            auto lineEdit = qobject_cast<QLineEdit*>(children.at(i));
+            const auto lineEdit = qobject_cast<QLineEdit*>(children.at(i));
 
             QCOMPARE(lineEdit->text(), "newUser0");
 
@@ -304,5 +319,5 @@ void MainWindowTest::testEditCellInTable()
 
     QTest::qWait(1000);
 
-    QCOMPARE(mainWindow->ui->listWidget->itemAt(rect.center())->text(), "newAdmin");
+    QCOMPARE(testWidget->itemAt(rect.center())->text(), "newAdmin");
 }
