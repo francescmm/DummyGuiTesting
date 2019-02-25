@@ -30,7 +30,6 @@ void MainWindowTest::testValid_data()
     QTest::newRow("Invalid, normal") << 1973 << 9 << 31 << false;
     QTest::newRow("Valid, leap-year") << 1980 << 2 << 29 << true;
     QTest::newRow("Invalid, leap-year") << 1981 << 2 << 29 << false;
-    QTest::newRow("Invalid, leap-year-2") << 1981 << 2 << 29 << true;
 }
 
 void MainWindowTest::initTestCase()
