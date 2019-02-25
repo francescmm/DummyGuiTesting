@@ -11,46 +11,47 @@
 
 void MainWindowTest::testValid()
 {
-  QFETCH( int, year );
-  QFETCH( int, month );
-  QFETCH( int, day );
+    QFETCH(int, year);
+    QFETCH(int, month);
+    QFETCH(int, day);
 
-  QDate date( year, month, day );
-  QTEST( date.isValid(), "valid" );
+    QDate date(year, month, day);
+    QTEST(date.isValid(), "valid");
 }
 
 void MainWindowTest::testValid_data()
 {
-  QTest::addColumn<int>( "year" );
-  QTest::addColumn<int>( "month" );
-  QTest::addColumn<int>( "day" );
-  QTest::addColumn<bool>( "valid" );
+    QTest::addColumn<int>("year");
+    QTest::addColumn<int>("month");
+    QTest::addColumn<int>("day");
+    QTest::addColumn<bool>("valid");
 
-  QTest::newRow( "Valid, normal" ) << 1973 << 8 << 16 << true;
-  QTest::newRow( "Invalid, normal" ) << 1973 << 9 << 31 << false;
-  QTest::newRow( "Valid, leap-year" ) << 1980 << 2 << 29 << true;
-  QTest::newRow( "Invalid, leap-year" ) << 1981 << 2 << 29 << false;
+    QTest::newRow("Valid, normal") << 1973 << 8 << 16 << true;
+    QTest::newRow("Invalid, normal") << 1973 << 9 << 31 << false;
+    QTest::newRow("Valid, leap-year") << 1980 << 2 << 29 << true;
+    QTest::newRow("Invalid, leap-year") << 1981 << 2 << 29 << false;
+    QTest::newRow("Invalid, leap-year-2") << 1981 << 2 << 29 << true;
 }
 
-void MainWindowTest::initTestCase ()
+void MainWindowTest::initTestCase()
 {
-    mainWindow = new MainWindow ();
-    mainWindow->show ();
+    mainWindow = new MainWindow();
+    mainWindow->show();
 
-    QVERIFY (mainWindow->isVisible ());
+    QVERIFY(mainWindow->isVisible());
 }
 
-void MainWindowTest::cleanupTestCase ()
+void MainWindowTest::cleanupTestCase()
 {
-    mainWindow->close ();
+    mainWindow->close();
 
-    QVERIFY (!mainWindow->isVisible ());
+    QVERIFY(!mainWindow->isVisible());
 
     delete mainWindow;
     mainWindow = nullptr;
 }
 
-void MainWindowTest::cleanup ()
+void MainWindowTest::cleanup()
 {
     const auto colCount = mainWindow->ui->tableWidget->columnCount();
 
@@ -75,41 +76,41 @@ void MainWindowTest::cleanup ()
     mainWindow->repaint();
 }
 
-void MainWindowTest::testWithWarnings ()
+void MainWindowTest::testWithWarnings()
 {
-    QWARN ("Test is empty. Fill it with something!");
+    QWARN("Test is empty. Fill it with something!");
 }
 
-void MainWindowTest::testSkipedWithMessage ()
+void MainWindowTest::testSkipedWithMessage()
 {
-    QSKIP ("Test skiped voluntary.");
+    QSKIP("Test skiped voluntary.");
 
     // The following content won't be executed
-    QCOMPARE (0.0, 1.0);
+    QCOMPARE(0.0, 1.0);
 }
 
-void MainWindowTest::testWithExpectedFailures ()
+void MainWindowTest::testWithExpectedFailures()
 {
-    QEXPECT_FAIL ("", "First QVERIFY or QCOMPARE of the test won't fail the test. We can choose Continue or Abort.", TestFailMode::Continue);
+    QEXPECT_FAIL("", "First QVERIFY or QCOMPARE of the test won't fail the test. We can choose Continue or Abort.", TestFailMode::Continue);
 
     auto i = 0;
-    QCOMPARE (i, 42);
+    QCOMPARE(i, 42);
 
     // If we add more QCOMPARE or QVERIFY they must be true tu pass the test
     i = 42;
-    QCOMPARE (i, 42);
+    QCOMPARE(i, 42);
 }
 
-void MainWindowTest::testFailsOnWindows ()
+void MainWindowTest::testFailsOnWindows()
 {
 #ifdef Q_OS_WIN
-    QFAIL ("Test not ported to Windows.");
+    QFAIL("Test not ported to Windows.");
 #else
-    QCOMPARE (0, 0);
+    QCOMPARE(0, 0);
 #endif
 }
 
-void MainWindowTest::testCompareAndVerify ()
+void MainWindowTest::testCompareAndVerify()
 {
     /* QCOMPARE shows a message when the values are not equal. For expression:
      *
@@ -121,7 +122,7 @@ void MainWindowTest::testCompareAndVerify ()
      * Expected (QString("HELLO")): "HELLO"
      */
 
-    QCOMPARE ("hello", QString ("HELLO").toLower ());
+    QCOMPARE("hello", QString("HELLO").toLower());
 
     /* QVERIFY only shows the condition and says that is false. No more explanations
      *
@@ -139,7 +140,7 @@ void MainWindowTest::testCompareAndVerify ()
     auto num1 = 4.0f;
     auto num2 = 4u;
 
-    QVERIFY2 (num1 == num2, "Comparing floating point with == or != is unsafe.");
+    QVERIFY2(num1 == num2, "Comparing floating point with == or != is unsafe.");
 }
 
 void MainWindowTest::testAddUser_data()
@@ -151,61 +152,61 @@ void MainWindowTest::testAddUser_data()
     QTest::newRow("user_valid") << QString("admin2") << "1234";
 }
 
-void MainWindowTest::testAddUser ()
+void MainWindowTest::testAddUser()
 {
-    QSignalSpy spy (mainWindow, &MainWindow::signalIsLogged);
-    QSignalSpy spy2 (mainWindow, &MainWindow::signalLogginFailed);
+    QSignalSpy spy(mainWindow, &MainWindow::signalIsLogged);
+    QSignalSpy spy2(mainWindow, &MainWindow::signalLogginFailed);
 
     QFETCH(QString, user);
     QFETCH(QString, pass);
 
-    QTest::keyClicks (mainWindow->ui->leUsername, user);
-    QTest::keyClicks (mainWindow->ui->lePassword, pass);
+    QTest::keyClicks(mainWindow->ui->leUsername, user);
+    QTest::keyClicks(mainWindow->ui->lePassword, pass);
 
-    QTest::mouseClick (mainWindow->ui->pbAddUser, Qt::LeftButton);
+    QTest::mouseClick(mainWindow->ui->pbAddUser, Qt::LeftButton);
 
-    QCOMPARE (spy2.count (), 0);
+    QCOMPARE(spy2.count(), 0);
 
-    spy.wait (3500);
+    spy.wait(3500);
 
-    QCOMPARE (spy.count (), 1);
+    QCOMPARE(spy.count(), 1);
 
-    const auto firstArgFromTheSignal = spy.takeFirst ();
+    const auto firstArgFromTheSignal = spy.takeFirst();
 
-    QVERIFY2 (!firstArgFromTheSignal.isEmpty (), "The signal should have at least 1 param!");
+    QVERIFY2(!firstArgFromTheSignal.isEmpty(), "The signal should have at least 1 param!");
 
-    const auto signalParam = firstArgFromTheSignal.constFirst ();
+    const auto signalParam = firstArgFromTheSignal.constFirst();
 
-    QCOMPARE (signalParam, user);
+    QCOMPARE(signalParam, user);
 }
 
-void MainWindowTest::testBenchamrkedLoop1 ()
+void MainWindowTest::testBenchamrkedLoop1()
 {
     QBENCHMARK
     {
         for (auto i = 0; i < 1000000; ++i)
         {
-            auto s = new QString ("hola");
+            auto s = new QString("hola");
             delete s;
         }
     }
 }
 
-void MainWindowTest::testBenchamrkedLoop2 ()
+void MainWindowTest::testBenchamrkedLoop2()
 {
     QBENCHMARK
     {
         for (auto i = 0; i < 1000000; ++i)
-            QScopedPointer<QString> s (new QString ("hola"));
+            QScopedPointer<QString> s(new QString("hola"));
     }
 }
 
-void MainWindowTest::testBenchmarkedLoop3 ()
+void MainWindowTest::testBenchmarkedLoop3()
 {
     QBENCHMARK
     {
         for (auto i = 0; i < 1000000; ++i)
-            auto s = QSharedPointer<QString>::create ("hola");
+            auto s = QSharedPointer<QString>::create("hola");
     }
 }
 
@@ -221,34 +222,34 @@ void MainWindowTest::testSelectCellInTable_data()
 
 void MainWindowTest::testSelectCellInTable()
 {
-    QSignalSpy spy (mainWindow, &MainWindow::signalIsLogged);
-    QSignalSpy spy2 (mainWindow, &MainWindow::signalLogginFailed);
+    QSignalSpy spy(mainWindow, &MainWindow::signalIsLogged);
+    QSignalSpy spy2(mainWindow, &MainWindow::signalLogginFailed);
 
     QFETCH(QString, user);
     QFETCH(QString, pass);
     QFETCH(bool, isValid);
 
-    QTest::keyClicks (mainWindow->ui->leUsername, user);
-    QTest::keyClicks (mainWindow->ui->lePassword, pass);
+    QTest::keyClicks(mainWindow->ui->leUsername, user);
+    QTest::keyClicks(mainWindow->ui->lePassword, pass);
 
-    QTest::mouseClick (mainWindow->ui->pbAddUser, Qt::LeftButton);
+    QTest::mouseClick(mainWindow->ui->pbAddUser, Qt::LeftButton);
 
     if (isValid)
     {
-        spy.wait (3500);
+        spy.wait(3500);
 
-        QCOMPARE (spy.count (), 1);
-        QCOMPARE (spy2.count (), 0);
+        QCOMPARE(spy.count(), 1);
+        QCOMPARE(spy2.count(), 0);
 
-        const auto firstArgFromTheSignal = spy.takeFirst ();
+        const auto firstArgFromTheSignal = spy.takeFirst();
 
-        QVERIFY2 (!firstArgFromTheSignal.isEmpty (), "The signal should have at least 1 param!");
+        QVERIFY2(!firstArgFromTheSignal.isEmpty(), "The signal should have at least 1 param!");
 
-        const auto signalParam = firstArgFromTheSignal.constFirst ();
+        const auto signalParam = firstArgFromTheSignal.constFirst();
 
-        QCOMPARE (signalParam, user);
+        QCOMPARE(signalParam, user);
 
-        QSignalSpy spy3 (mainWindow->ui->tableWidget, &QTableWidget::cellClicked);
+        QSignalSpy spy3(mainWindow->ui->tableWidget, &QTableWidget::cellClicked);
 
         const auto selectedRow = 0;
         const auto selectedColumn = 1;
@@ -261,9 +262,9 @@ void MainWindowTest::testSelectCellInTable()
 
         QCOMPARE(spy3.count(), 1);
 
-        auto signalsSent = spy3.takeFirst ();
+        auto signalsSent = spy3.takeFirst();
 
-        QVERIFY2 (!signalsSent.isEmpty (), "The signal should have at least 1 param!");
+        QVERIFY2(!signalsSent.isEmpty(), "The signal should have at least 1 param!");
 
         const auto expectedRow = signalsSent.takeFirst();
         const auto expectedColumn = signalsSent.takeFirst();
@@ -273,16 +274,16 @@ void MainWindowTest::testSelectCellInTable()
     }
     else
     {
-        spy.wait (3500);
+        spy.wait(3500);
 
-        QCOMPARE (spy.count (), 0);
-        QCOMPARE (spy2.count (), 1);
+        QCOMPARE(spy.count(), 0);
+        QCOMPARE(spy2.count(), 1);
     }
 }
 
 void MainWindowTest::testEditCellInTable()
 {
-    QTest::mouseClick (mainWindow->ui->pbAddToList, Qt::LeftButton);
+    QTest::mouseClick(mainWindow->ui->pbAddToList, Qt::LeftButton);
 
     const auto testWidget = mainWindow->ui->listWidget;
     const auto selectedRow = 0;
@@ -303,7 +304,7 @@ void MainWindowTest::testEditCellInTable()
     {
         if (children.at(i)->inherits("QExpandingLineEdit"))
         {
-            const auto lineEdit = qobject_cast<QLineEdit*>(children.at(i));
+            const auto lineEdit = qobject_cast<QLineEdit *>(children.at(i));
 
             QCOMPARE(lineEdit->text(), "newUser0");
 

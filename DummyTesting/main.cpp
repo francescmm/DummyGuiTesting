@@ -1,6 +1,7 @@
 #include <QApplication>
 #include <QTest>
 #include <MainWindowTest.cpp>
+#include <iostream>
 
 int main(int argc, char *argv[])
 {
@@ -34,6 +35,8 @@ int main(int argc, char *argv[])
         qWarning() << "Results written to: " << outputFile;
         qWarning() << "#######################################";
     }
+
+    std::cout << failedTests.count() << std::endl;
 
     return failedTests.count();
 }
