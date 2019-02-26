@@ -7,11 +7,15 @@ SOURCES +=  \
     ../DummyGui/MainWindow.cpp \
     ../DummyGui/PersonalInfoFrame.cpp \
     main.cpp \
-    MainWindowTest.cpp
+    MainWindowTest.cpp \
+    TestManager.cpp \
+    BaseTest.cpp
 
 HEADERS += ../DummyGui/MainWindow.h \
     ../DummyGui/PersonalInfoFrame.h \
-    MainWindowTest.h
+    MainWindowTest.h \
+    TestManager.h \
+    BaseTest.h
 
 FORMS += ../DummyGui/MainWindow.ui
 

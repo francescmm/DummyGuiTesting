@@ -1,46 +1,44 @@
 #ifndef MAINWINDOWTEST_H
 #define MAINWINDOWTEST_H
 
-#include <QObject>
+#include "BaseTest.h"
 
 class MainWindow;
 
-class MainWindowTest : public QObject
-{
-    Q_OBJECT
+class MainWindowTest : public BaseTest {
+	Q_OBJECT
+public:
+	MainWindowTest();
+	~MainWindowTest() override = default;
 
-  public:
-    MainWindowTest ()  = default;
-    ~MainWindowTest () = default;
-
-  private slots:
-    void initTestCase ();
-    void cleanupTestCase ();
-    void init () { }
-    void cleanup ();
+private slots:
+	void initTestCase() override;
+	void cleanupTestCase() override;
+	void init() override {}
+	void cleanup() override;
 
     void testAddUser_data();
-    void testAddUser ();
+	void testAddUser();
 
     void testValid();
     void testValid_data();
 
-    void testWithWarnings ();
-    void testSkipedWithMessage ();
-    void testWithExpectedFailures ();
-    void testFailsOnWindows ();
-    void testCompareAndVerify ();
-    void testBenchamrkedLoop1 ();
-    void testBenchamrkedLoop2 ();
-    void testBenchmarkedLoop3 ();
+	void testWithWarnings();
+	void testSkipedWithMessage();
+	void testWithExpectedFailures();
+	void testFailsOnWindows();
+	void testCompareAndVerify();
+	void testBenchamrkedLoop1();
+	void testBenchamrkedLoop2();
+	void testBenchmarkedLoop3();
 
     void testSelectCellInTable_data();
-    void testSelectCellInTable ();
+	void testSelectCellInTable();
 
     void testEditCellInTable();
 
-  private:
-    MainWindow *mainWindow = nullptr;
+private:
+	MainWindow* mainWindow = nullptr;
 };
 
 #endif // MAINWINDOWTEST_H

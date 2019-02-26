@@ -1,11 +1,12 @@
 ﻿#include <QCoreApplication>
+#include <QLineEdit>
 #include <QSignalSpy>
 #include <QtTest>
-#include <QLineEdit>
 
 // Additional includes
-#include "MainWindowTest.h"
 #include "MainWindow.h"
+#include "MainWindowTest.h"
+#include "TestManager.h"
 #include "ui_MainWindow.h"
 #include <QtWidgets/QMainWindow>
 
@@ -29,7 +30,12 @@ void MainWindowTest::testValid_data()
     QTest::newRow("Valid, normal") << 1973 << 8 << 16 << true;
     QTest::newRow("Invalid, normal") << 1973 << 9 << 31 << false;
     QTest::newRow("Valid, leap-year") << 1980 << 2 << 29 << true;
-    QTest::newRow("Invalid, leap-year") << 1981 << 2 << 29 << false;
+	QTest::newRow("Invalid, leap-year") << 1981 << 2 << 29 << false;
+}
+
+MainWindowTest::MainWindowTest()
+	: BaseTest()
+{
 }
 
 void MainWindowTest::initTestCase()
@@ -54,8 +60,7 @@ void MainWindowTest::cleanup()
 {
     const auto colCount = mainWindow->ui->tableWidget->columnCount();
 
-    for (auto row = mainWindow->ui->tableWidget->rowCount() - 1; row >= 0; --row)
-    {
+	for (auto row = mainWindow->ui->tableWidget->rowCount() - 1; row >= 0; --row) {
         for (auto col = 0; col < colCount; ++col)
             delete mainWindow->ui->tableWidget->cellWidget(row, col);
 
@@ -64,8 +69,7 @@ void MainWindowTest::cleanup()
 
     mainWindow->ui->tableWidget->clearContents();
 
-    for (auto row = mainWindow->ui->listWidget->count() - 1; row >= 0; --row)
-    {
+	for (auto row = mainWindow->ui->listWidget->count() - 1; row >= 0; --row) {
         const auto item = mainWindow->ui->listWidget->item(row);
         delete mainWindow->ui->listWidget->itemWidget(item);
 
@@ -183,8 +187,7 @@ void MainWindowTest::testBenchamrkedLoop1()
 {
     QBENCHMARK
     {
-        for (auto i = 0; i < 1000000; ++i)
-        {
+		for (auto i = 0; i < 1000000; ++i) {
             auto s = new QString("hola");
             delete s;
         }
@@ -233,8 +236,7 @@ void MainWindowTest::testSelectCellInTable()
 
     QTest::mouseClick(mainWindow->ui->pbAddUser, Qt::LeftButton);
 
-    if (isValid)
-    {
+	if (isValid) {
         spy.wait(3500);
 
         QCOMPARE(spy.count(), 1);
@@ -270,9 +272,7 @@ void MainWindowTest::testSelectCellInTable()
 
         QCOMPARE(expectedRow, selectedRow);
         QCOMPARE(expectedColumn, selectedColumn);
-    }
-    else
-    {
+	} else {
         spy.wait(3500);
 
         QCOMPARE(spy.count(), 0);
@@ -297,13 +297,11 @@ void MainWindowTest::testEditCellInTable()
 
     QTest::qWait(200);
 
-    QList<QObject *> children = testWidget->viewport()->children();
+	QList<QObject*> children = testWidget->viewport()->children();
 
-    for (int i = 0; i < children.size(); ++i)
-    {
-        if (children.at(i)->inherits("QExpandingLineEdit"))
-        {
-            const auto lineEdit = qobject_cast<QLineEdit *>(children.at(i));
+	for (int i = 0; i < children.size(); ++i) {
+		if (children.at(i)->inherits("QExpandingLineEdit")) {
+			const auto lineEdit = qobject_cast<QLineEdit*>(children.at(i));
 
             QCOMPARE(lineEdit->text(), "newUser0");
 
@@ -321,3 +319,5 @@ void MainWindowTest::testEditCellInTable()
 
     QCOMPARE(testWidget->itemAt(rect.center())->text(), "newAdmin");
 }
+
+const static MainWindowTest mainWindowTest;
