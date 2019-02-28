@@ -29,7 +29,6 @@ class MainWindowTest : public BaseTest
    void testWithWarnings();
    void testSkipedWithMessage();
    void testWithExpectedFailures();
-   void testFailsOnWindows();
    void testCompareAndVerify();
    void testBenchamrkedLoop1();
    void testBenchamrkedLoop2();
