@@ -6,10 +6,6 @@ sudo apt-get install -y liblzo2-dev liblz4-dev libfreetype6-dev libpng-dev libeg
 sudo apt-get -qq install g++-4.9 libc6-i386 qt59tools qt59charts-no-lgpl
 export CXX="g++-4.9 -std=c++14"
 export CC="gcc-4.9"
-export DISPLAY=:99.0
+export DISPLAY=:0.0
+export XAUTHORITY=~/.Xauthority
 sh -e /etc/init.d/xvfb start
-
-# someone forgot to include liblz4.pc with the package, use the version from xenial, as it only depends on libc
-wget http://mirrors.kernel.org/ubuntu/pool/main/l/lz4/liblz4-1_0.0~r131-2ubuntu2_amd64.deb -O liblz4.deb
-wget http://mirrors.kernel.org/ubuntu/pool/main/l/lz4/liblz4-dev_0.0~r131-2ubuntu2_amd64.deb -O liblz4-dev.deb
-sudo dpkg -i liblz4.deb liblz4-dev.deb

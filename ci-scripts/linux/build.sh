@@ -8,4 +8,4 @@ cd ..
 cd DummyTesting
 qmake DummyTesting.pro
 make -j 2
-./DummyTesting
+./DummyTesting --platform offscreen
