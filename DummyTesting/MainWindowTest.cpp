@@ -110,7 +110,7 @@ void MainWindowTest::testWithExpectedFailures()
 void MainWindowTest::testFailsOnWindows()
 {
 #ifdef Q_OS_WIN
-   QFAIL("Test not ported to Windows.");
+   QEXPECT_FAIL("", "Test not ported to Windows.", TestFailMode::Continue);
 #else
    QCOMPARE(0, 0);
 #endif
