@@ -33,7 +33,10 @@ void MainWindowTest::testValid_data()
    QTest::newRow("Invalid, leap-year") << 1981 << 2 << 29 << false;
 }
 
-MainWindowTest::MainWindowTest() : BaseTest() {}
+MainWindowTest::MainWindowTest()
+   : BaseTest()
+{
+}
 
 void MainWindowTest::initTestCase()
 {
@@ -125,7 +128,7 @@ void MainWindowTest::testCompareAndVerify()
     * Expected (QString("HELLO")): "HELLO"
     */
 
-   QCOMPARE("hello", QString("HELLO").toLower());
+   QCOMPARE(QString("hello"), QString("HELLO").toLower());
 
    /* QVERIFY only shows the condition and says that is false. No more explanations
     *
@@ -180,7 +183,7 @@ void MainWindowTest::testAddUser()
 
    const auto signalParam = firstArgFromTheSignal.constFirst();
 
-   QCOMPARE(signalParam, user);
+   QCOMPARE(signalParam.toString(), user);
 }
 
 void MainWindowTest::testBenchamrkedLoop1()
@@ -250,7 +253,7 @@ void MainWindowTest::testSelectCellInTable()
 
       const auto signalParam = firstArgFromTheSignal.constFirst();
 
-      QCOMPARE(signalParam, user);
+      QCOMPARE(signalParam.toString(), user);
 
       QSignalSpy spy3(mainWindow->ui->tableWidget, &QTableWidget::cellClicked);
 
@@ -272,8 +275,8 @@ void MainWindowTest::testSelectCellInTable()
       const auto expectedRow = signalsSent.takeFirst();
       const auto expectedColumn = signalsSent.takeFirst();
 
-      QCOMPARE(expectedRow, selectedRow);
-      QCOMPARE(expectedColumn, selectedColumn);
+      QCOMPARE(expectedRow.toInt(), selectedRow);
+      QCOMPARE(expectedColumn.toInt(), selectedColumn);
    }
    else
    {
@@ -323,7 +326,7 @@ void MainWindowTest::testEditCellInTable()
 
    QTest::qWait(1000);
 
-   QCOMPARE(testWidget->itemAt(rect.center())->text(), "newAdmin");
+   QCOMPARE(testWidget->itemAt(rect.center())->text(), QString("newAdmin"));
 }
 
 const static MainWindowTest mainWindowTest;
