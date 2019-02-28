@@ -4,15 +4,14 @@
 #include <QVBoxLayout>
 
 PersonalInfoFrame::PersonalInfoFrame(QWidget *parent)
-   : QFrame (parent)
+   : QFrame(parent)
+   , checkbox{new QCheckBox("Checkbox Text")}
+   , radiobutton{new QRadioButton("RadioButton Text")}
 {
-   checkbox = new QCheckBox("Checkbox Text");
-
-   radiobutton = new QRadioButton("RadioButton Text");
 
    auto layout = new QVBoxLayout();
-   layout->addWidget (checkbox);
-   layout->addWidget (radiobutton);
+   layout->addWidget(checkbox);
+   layout->addWidget(radiobutton);
 
-   setLayout (layout);
+   setLayout(layout);
 }

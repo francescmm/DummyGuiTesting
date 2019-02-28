@@ -3,5 +3,5 @@
 
 BaseTest::BaseTest()
 {
-	TestManager::getInstance().addTest(static_cast<BaseTest*>(this));
+   TestManager::getInstance().addTest(static_cast<BaseTest *>(this));
 }
