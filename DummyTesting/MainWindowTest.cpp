@@ -107,15 +107,6 @@ void MainWindowTest::testWithExpectedFailures()
    QCOMPARE(i, 42);
 }
 
-void MainWindowTest::testFailsOnWindows()
-{
-#ifdef Q_OS_WIN
-   QEXPECT_FAIL("", "Test not ported to Windows.", TestFailMode::Continue);
-#else
-   QCOMPARE(0, 0);
-#endif
-}
-
 void MainWindowTest::testCompareAndVerify()
 {
    /* QCOMPARE shows a message when the values are not equal. For expression:
