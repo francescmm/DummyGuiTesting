@@ -1,15 +1,15 @@
 version: 1.0.{build}
 build_script:
 - cmd: >-
-  "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64
-  set "QTDIR=C:\Qt\5.11.3\mingw53_32"
-  set "PATH=%QTDIR%\bin;C:\Qt\Tools\mingw530_32\bin;C:\MinGW\bin;%PATH%"
-  cd C:\projects\dummyguitesting
-  cd DummyGui
-  qmake.exe DummyGui.pro
-  mingw32-make
-  cd ..
-  cd DummyTesting
-  qmake.exe DummyTesting.pro
-  mingw32-make
-  release\DummyTesting.exe
+    C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat amd64
+    set "QTDIR=C:\Qt\5.11.3\mingw53_32"
+    set "PATH=%QTDIR%\bin;C:\Qt\Tools\mingw530_32\bin;C:\MinGW\bin;%PATH%"
+    cd C:\projects\dummyguitesting
+    cd DummyGui
+    qmake.exe DummyGui.pro
+    mingw32-make
+    cd ..
+    cd DummyTesting
+    qmake.exe DummyTesting.pro
+    mingw32-make
+    release\DummyTesting.exe
