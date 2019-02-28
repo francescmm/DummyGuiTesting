@@ -312,7 +312,7 @@ void MainWindowTest::testEditCellInTable()
       {
          const auto lineEdit = qobject_cast<QLineEdit *>(children.at(i));
 
-         QCOMPARE(lineEdit->text(), "newUser0");
+         QCOMPARE(lineEdit->text(), QString("newUser0"));
 
          lineEdit->setText("newAdmin");
 
