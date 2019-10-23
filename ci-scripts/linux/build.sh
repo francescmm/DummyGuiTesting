@@ -1,4 +1,4 @@
-QTDIR="/opt/qt59"
+QTDIR="/opt/qt513"
 PATH="$QTDIR/bin:$PATH"
 
 cd DummyGui
