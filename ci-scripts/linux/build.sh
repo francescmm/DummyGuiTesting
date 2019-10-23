@@ -3,6 +3,8 @@ unzip -qq qt5.zip -d qt5;
 export QTDIR=$PWD/qt5
 export PATH=$QTDIR/bin:$PATH;
 export QT_PLUGIN_PATH=$PWD/qt5/plugins;
+ls $QTDIR
+ls $QTDIR/bin
 cd DummyGui
 $QTDIR/bin/qmake DummyGui.pro
 make -j 2
